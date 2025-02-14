@@ -14,9 +14,32 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
-  password String
-  email    String @unique
-  name     String
+  id                Int       @id @default(autoincrement())
+  email             String    @unique
+  password          String
+  forename          String
+  surname           String
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  is_active         Boolean   @default(true)
+  is_verified       Boolean   @default(false)
+  role              String    @default("user")
+  last_login        DateTime?
+  profile_picture   String?
+  reset_token       String?
+  reset_token_expiry DateTime?
+
+  // Relationship with other models
+  userFinancials    UserFinancials?
+
+  @@index([email])
+}
+
+model UserFinancials {
+  id         Int    @id @default(autoincrement())
+  userId     Int    @unique    // Foreign key for the user
+  cash       Float
+  property   Float
+  debt       Float
+  user       User   @relation(fields: [userId], references: [id]) // Relation field
 }
